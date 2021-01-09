@@ -44,3 +44,68 @@ module.exports = {
 // 参照オブジェクトが書き換えられ、違うメモリに値が保管されるため
 // exportsで反映されない
 ```
+
+### esModuleInterop
+- esModuleInterOperation
+- moduleの相互補完性
+
+#### そもそもインポートとは
+- デフォルトインポート
+  - `import practice from './preactice-export'`文
+    - jsに変換するときに`exports.default = ...`の形になる
+
+- 名前付きインポート
+  - `import * as practice from './preactice-export'`文
+    - jsに変換されると`export.name = ...`のようにexport時につけた名前で呼び出される
+
+#### esModuleInteropについて
+- expressの場合
+  - `import express from 'express'`（デフォルトインポート）
+    - `esModuleInterop: false`だとエラー
+  - `import * as express from 'express'`（名前付きインポート）
+    - `esModuleInterop: false`でもエラーにならない
+  - `const express = require('express')`（専用の構文）
+    - `esModuleInterop: false`でもエラーにならない
+
+#### 名前付きインポートのjsの制約
+- Not callable
+  - ()で関数呼び出しできるような形でimportしてはいけない
+- Not newable
+  - newできるような形でimportしてはいけない
+```ts
+import * as express from 'express'
+const app = express()
+// この形はめちゃくちゃjsのルールを破っている
+```
+- そのため、`const express = require('express')`構文を新しく作った
+
+#### 結局どう書けばいいか
+- `const express = require('express')`
+- または
+- `import * as express from 'express'`
+- デフォルトインポートは外部パッケージが対応しているか否かで使えるかが変わる。（`import express from 'express'`）
+
+#### exportsは？
+```ts
+export const person = 'Peter'
+// js → exports.person = 'Peter';（exports.xxx）の形
+```
+
+```ts
+const person = {
+    name: 'Peter'
+};
+module.exports = person;
+
+// js → 
+// const person = {
+//     name: 'Peter'
+// };
+// module.exports = person;（module.exports = ...）の形
+```
+
+### ツール間でのimportの書き方の違う件
+- tsは悩む
+  - `esModuleInterop`が答え
+- `esModuleInterop: true`が解決する
+- 
