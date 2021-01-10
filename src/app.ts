@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Request, Response, NextFunction } from 'express'
 // const express = require('express')
 
 const app = express()
@@ -6,6 +6,7 @@ const app = express()
 // middleware
 app.use((req, res, next) => {
   console.log('hello')
+  throw new Error()
   next()
 })
 
@@ -15,8 +16,8 @@ app.get('/', (req, res, next) => {
 })
 
 // error handling
-// app.use((err, req, res, next) => {
-//   next()
-// })
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  next()
+})
 
 app.listen(3000)
