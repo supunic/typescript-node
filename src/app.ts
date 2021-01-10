@@ -1,18 +1,29 @@
 import express, { Request, Response, NextFunction } from 'express'
 // const express = require('express')
 
+interface MessageRequest extends Request {
+  body: {
+    message: string
+  }
+}
+
 const app = express()
+app.use(express.json()) // requestの中にbodyができる（request.bodyで参照できる）
 
 // middleware
 app.use((req, res, next) => {
   console.log('hello')
-  throw new Error()
+  // throw new Error()
   next()
 })
 
 // route
 app.get('/', (req, res, next) => {
   res.send('<h1>Hello</h1>')
+})
+app.post('/', (req: MessageRequest, res, next) => {
+  console.log(req.body)
+  res.send(`<h1>I got ${req.body.message}</h1>`)
 })
 
 // error handling
