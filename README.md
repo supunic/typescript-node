@@ -108,4 +108,30 @@ module.exports = person;
 - tsは悩む
   - `esModuleInterop`が答え
 - `esModuleInterop: true`が解決する
-- 
+  - tsからjsにトランスパイルするときに、特定の処理を先頭に書き加えて制約や他のモジュールとの関係性をよしなにしてくれる
+
+### esModuleInterop: true
+- モジュールが非対応でもデフォルトインポートができるようになる
+  - `import express from 'express'`文
+- 対応していようがいまいが、`default`で必ずラップされるようになる
+  - だからデフォルトインポートを気にせず必ず使えるようになる
+
+#### mod.__esModule
+- デフォルトインポートすると、`mod.__esModule`で判別がかかる
+- `__esModule = true`はTSからトランスパイルされたjsオブジェクトにはほとんど必ず入っているメンバ変数
+  - `module.exports`をしたときは`__esModule`がつかなかったりする
+
+#### import * as express from 'express' の場合
+- `__importStar`は、*に対応している
+- Not newableや、Not callableを守るような仕組みにしてくれる
+  - for分でmoduleを回して関数を排除している
+
+#### allowSyntheticDefaultImportsとの違い
+- 基本的に目的ややることは同じ
+- `esModuleInterop`
+  - バックエンド寄り
+- `allowSyntheticDefaultImports`
+  - あくまでデフォルトインポート時のtype checking（型のチェック）のみに使用される
+  - `esModuleInterop`がやるようなトランスパイル時の処理はやってくれない
+  - バベルやwebpackのような他のツールでコンパイルをするときはこっちでやったりする
+  - フロントエンド寄り
